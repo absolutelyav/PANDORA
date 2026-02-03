@@ -4,185 +4,82 @@
 <meta charset="UTF-8">
 <title>PCAP Anomaly Analyzer</title>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-/* ===== CYBER THEME ===== */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: radial-gradient(circle at top, #0f2027, #000000);
-    color: #e0e0e0;
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:"Segoe UI", Arial;
+    background:#0b1c24;
+    color:#e0e0e0;
 }
 
-.container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #0b1c1f;
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(0,255,150,0.25);
-    padding: 30px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    transform-style: preserve-3d;
+/* ===== Top Navbar ===== */
+.navbar{
+    height:60px;
+    background:#020d14;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    border-bottom:1px solid #0f3d4c;
 }
+.navbar h1{color:#00e6ff;font-size:20px}
+.navbar span{color:#aaa}
 
-h1, h2, h3 {
-    color: #00ff9c;
-    text-shadow: 0 0 10px rgba(0,255,150,0.4);
+/* ===== Layout ===== */
+.wrapper{display:flex;min-height:calc(100vh - 60px)}
+
+/* ===== Sidebar ===== */
+.sidebar{
+    width:230px;
+    background:#020d14;
+    padding:20px;
+    border-right:1px solid #0f3d4c;
 }
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+.sidebar a{
+    display:block;
+    color:#ccc;
+    padding:12px;
+    margin:8px 0;
+    text-decoration:none;
+    border-radius:6px;
 }
+.sidebar a:hover{background:#00e6ff;color:#000}
 
-button {
-    background: transparent;
-    border: 1px solid #00ff9c;
-    color: #00ff9c;
-    padding: 8px 18px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: 0.3s;
+/* ===== Main ===== */
+.main{flex:1;padding:30px}
+
+/* ===== Cards ===== */
+.card{
+    background:#071821;
+    padding:25px;
+    border-radius:10px;
+    margin-bottom:25px;
+    box-shadow:0 0 20px rgba(0,255,255,0.08);
+    transition:transform .2s ease, box-shadow .2s ease;
+    transform-style:preserve-3d;
 }
+.card h2{color:#00e6ff;margin-top:0}
 
-button:hover {
-    background: #00ff9c;
-    color: #000;
-    box-shadow: 0 0 15px #00ff9c;
+/* ===== Inputs & Buttons ===== */
+input, button{
+    padding:10px;
+    border-radius:6px;
+    transition:transform .2s ease, box-shadow .2s ease;
 }
-
-button.main {
-    padding: 12px 30px;
-    font-weight: bold;
+input{
+    width:100%;
+    margin:10px 0;
+    background:#020d14;
+    color:#fff;
+    border:1px solid #00e6ff;
 }
-
-input {
-    width: 80%;
-    padding: 12px;
-    margin: 12px 0;
-    background: #081316;
-    border: 1px solid #00ff9c;
-    color: #e0e0e0;
-    border-radius: 8px;
+button{
+    background:#00e6ff;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
 }
+button:hover{background:#00bcd4}
 
-.section {
-    display: none;
-    margin-top: 30px;
-}
-
-.section.active {
-    display: block;
-}
-
-.faq {
-    background: #081316;
-    padding: 15px;
-    border-left: 3px solid #00ff9c;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    transform-style: preserve-3d;
-}
-
-#result, canvas {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    transform-style: preserve-3d;
-}
-
-canvas {
-    cursor: zoom-in;
-}
-
-/* Hover zoom fallback */
-.container:hover,
-.faq:hover,
-#result:hover,
-canvas:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 35px rgba(0,255,150,0.45);
-}
-
-/* Touch feedback */
-.container:active,
-.faq:active,
-#result:active {
-    transform: scale(1.02);
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<!-- LOGIN -->
-<div id="login" class="section active">
-    <h1>Secure Login</h1>
-    <p>Enter your credentials</p>
-
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <br>
-    <button class="main" onclick="login()">Login</button>
-
-    <p id="loginError" style="color:#ff4d4d;"></p>
-</div>
-
-<!-- APP -->
-<div id="app" class="section">
-
-    <div class="navbar">
-        <h2>PCAP Analyzer Dashboard</h2>
-        <div>
-            <button onclick="showSection('dashboard')">Dashboard</button>
-            <button onclick="showSection('upload')">Upload</button>
-            <button onclick="showSection('faq')">FAQ</button>
-            <button onclick="logout()">Logout</button>
-        </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="section active">
-        <h1>Welcome, Analyst</h1>
-        <p>Analyze network traffic and detect threats.</p>
-    </div>
-
-    <!-- UPLOAD -->
-    <div id="upload" class="section">
-        <h2>Upload PCAP File</h2>
-        <input type="file" id="pcapFile" accept=".pcap">
-        <br>
-        <button class="main" onclick="analyzeFile()">Analyze</button>
-
-        <div id="result" style="margin-top:25px;"></div>
-        <canvas id="threatChart" style="margin-top:30px;"></canvas>
-    </div>
-
-    <!-- FAQ -->
-    <div id="faq" class="section">
-        <h2>FAQ</h2>
-        <div class="faq">
-            <h4>What is a PCAP file?</h4>
-            <p>A file containing captured network packets.</p>
-        </div>
-        <div class="faq">
-            <h4>Is this real analysis?</h4>
-            <p>No, this is a frontend demo for projects/hackathons.</p>
-        </div>
-    </div>
-
-</div>
-</div>
-
-<script>
-/* Demo credentials */
-const USERNAME = "admin";
-const PASSWORD = "admin123";
-
-let threa
-
+/* ===== 3D ZOOM FOR LOGIN*
