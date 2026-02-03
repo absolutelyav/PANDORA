@@ -3,136 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <title>PCAP Anomaly Analyzer</title>
+
 <style>
-body { font-family: Arial; background: #f4f4f9; margin:0; padding:0; }
-.container { max-width: 500px; margin: 50px auto; padding: 30px; background:white; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); text-align:center; }
-h1,h2 { color:#333; }
-input, select { width: 80%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ccc; }
-button, .btn { background:#4CAF50; color:white; padding:10px 25px; margin:10px 0; border:none; border-radius:5px; cursor:pointer; }
-button:hover, .btn:hover { background:#45a049; }
-a { color:#4CAF50; text-decoration:none; }
-a:hover { text-decoration:underline; }
-.hidden { display:none; }
-ul { text-align:left; }
+/* ===== CYBER THEME ===== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #000000);
+    color: #e0e0e0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #0b1c1f;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0,255,150,0.25);
+    padding: 30px;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #00ff9c;
+    text-shadow: 0 0 10px rgba(0,255,150,0.4);
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.navbar .links button {
+    background: transparent;
+    border: 1px solid #00ff9c;
+    color: #00ff9c;
+    padding: 8px 18px;
+    margin-left: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.navbar .links button:hover {
+    background: #00ff9c;
+    color: #000;
+    box-shadow: 0 0 15px #00ff9c;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="password"],
+input[type="file"] {
+    width: 80%;
+    padding: 12px;
+    margin: 12px 0;
+    background: #081316;
+    border: 1px solid #00ff9c;
+    color: #e0e0e0;
+    border-radius: 8px;
+}
+
+/* Buttons */
+button.main {
+    background: #00ff9c;
+    color: #000;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button.main:hover {
+    box-shadow: 0 0 20px #00ff9c;
+    transform: scale(1.05);
+}
+
+/* Sections */
+.section {
+    display: none;
+    margin-top: 30px;
+}
+
+.section.active {
+    display: block;
+}
+
+/* FAQ */
+.faq {
+    background: #081316;
+    padding: 15px;
+    border-left: 3px solid #00ff9c;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.faq h4 {
+    margin: 0;
+    color: #00ff9c;
+}
+
+/* Result */
+ul {
+    text-align: left;
+}
+li {
+    margin: 6px 0;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
 
-<!-- Home Page -->
-<div id="home">
-    <h1>Welcome to PCAP Anomaly Analyzer</h1>
-    <p>Analyze your network traffic for anomalies.</p>
-    <div class="buttons">
-        <button onclick="showPage('userLogin')">User Login</button>
-        <button onclick="showPage('adminLogin')">Admin Login</button>
+<!-- DASHBOARD NAVBAR -->
+<div class="navbar">
+    <h2>🛡️ PCAP Analyzer Dashboard</h2>
+    <div class="links">
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('upload')">Upload</button>
+        <button onclick="showSection('faq')">FAQ</button>
+        <button onclick="logout()">Logout</button>
     </div>
 </div>
 
-<!-- User Login Page -->
-<div id="userLogin" class="hidden">
-    <h2>User Login</h2>
-    <input type="text" id="userUsername" placeholder="Username"><br>
-    <input type="password" id="userPassword" placeholder="Password"><br>
-    <button onclick="loginUser()">Login</button><br>
-    <a href="#" onclick="showPage('home')">Back to Home</a>
+<!-- DASHBOARD HOME -->
+<div id="dashboard" class="section active">
+    <h1>Welcome, Analyst</h1>
+    <p>
+        Monitor and analyze network traffic for suspicious behavior using
+        cyber-forensic techniques.
+    </p>
+    <p>
+        🚀 Upload PCAP files <br>
+        🧠 Detect anomalies <br>
+        🔍 Understand threats
+    </p>
 </div>
 
-<!-- Admin Login Page -->
-<div id="adminLogin" class="hidden">
-    <h2>Admin Login</h2>
-    <input type="text" id="adminUsername" placeholder="Username"><br>
-    <input type="password" id="adminPassword" placeholder="Password"><br>
-    <button onclick="loginAdmin()">Login</button><br>
-    <a href="#" onclick="showPage('home')">Back to Home</a>
+<!-- UPLOAD SECTION -->
+<div id="upload" class="section">
+    <h2>📤 Upload PCAP File</h2>
+    <input type="file" id="pcapFile" accept=".pcap">
+    <br>
+    <button class="main" onclick="analyzeFile()">Analyze</button>
+
+    <div id="result" style="margin-top:25px;"></div>
 </div>
 
-<!-- Upload Page -->
-<div id="uploadPage" class="hidden">
-    <h2>Upload PCAP File</h2>
-    <input type="file" id="pcapFile" accept=".pcap"><br>
-    <button onclick="analyzeFile()">Analyze</button><br>
-    <a href="#" onclick="showPage('home')">Back to Home</a>
-</div>
+<!-- FAQ SECTION -->
+<div id="faq" class="section">
+    <h2>❓ Frequently Asked Questions</h2>
 
-<!-- Result Page -->
-<div id="resultPage" class="hidden">
-    <h2>Analysis Result</h2>
-    <p>File: <span id="resultFileName"></span></p>
-    <p>Anomalies detected at packets:</p>
-    <ul id="anomalyList"></ul>
-    <button onclick="showPage('uploadPage')">Analyze Another File</button><br>
-    <a href="#" onclick="showPage('home')">Back to Home</a>
+    <div class="faq">
+        <h4>What is a PCAP file?</h4>
+        <p>A PCAP file captures network packets and is used for traffic analysis and security monitoring.</p>
+    </div>
+
+    <div class="faq">
+        <h4>How are anomalies detected?</h4>
+        <p>This demo simulates anomaly detection. Real systems use ML models and rule-based analysis.</p>
+    </div>
+
+    <div class="faq">
+        <h4>Is this real-time analysis?</h4>
+        <p>No. This is an offline analysis demo intended for learning and hackathon presentation.</p>
+    </div>
+
+    <div class="faq">
+        <h4>Can this be extended?</h4>
+        <p>Yes! You can connect a Python backend (Scapy / PyShark) for real PCAP processing.</p>
+    </div>
 </div>
 
 </div>
 
 <script>
-// Page navigation
-function showPage(pageId){
-    const pages = ['home','userLogin','adminLogin','uploadPage','resultPage'];
-    pages.forEach(p => document.getElementById(p).classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
+/* Navigation */
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-// Dummy user login
-function loginUser(){
-    const user = document.getElementById('userUsername').value;
-    const pass = document.getElementById('userPassword').value;
-    if(user === "user" && pass === "password"){
-        alert("User login successful!");
-        showPage('uploadPage');
-    } else {
-        alert("Invalid user credentials!");
-    }
+/* Logout */
+function logout() {
+    alert("Logged out successfully!");
+    showSection('dashboard');
 }
 
-// Dummy admin login
-function loginAdmin(){
-    const user = document.getElementById('adminUsername').value;
-    const pass = document.getElementById('adminPassword').value;
-    if(user === "admin" && pass === "admin123"){
-        alert("Admin login successful!");
-        alert("Admin Dashboard - Here you can expand functionality");
-        showPage('home');
-    } else {
-        alert("Invalid admin credentials!");
-    }
-}
-
-// Dummy anomaly detection
-function analyzeFile(){
+/* Dummy Analysis */
+function analyzeFile() {
     const fileInput = document.getElementById('pcapFile');
-    if(fileInput.files.length === 0){
-        alert("Please select a file.");
+    if (fileInput.files.length === 0) {
+        alert("Please upload a PCAP file.");
         return;
     }
+
     const fileName = fileInput.files[0].name;
-    document.getElementById('resultFileName').innerText = fileName;
+    let html = `<h3>Analysis Result</h3>`;
+    html += `<p>File: <b>${fileName}</b></p>`;
+    html += `<ul>`;
 
-    // Simulate anomalies
-    const anomalies = [];
-    const totalPackets = Math.floor(Math.random()*50)+10;
-    for(let i=0; i<totalPackets; i++){
-        if(Math.random()<0.1) anomalies.push(i+1);
+    const packets = Math.floor(Math.random() * 40) + 15;
+    let anomalies = 0;
+
+    for (let i = 1; i <= packets; i++) {
+        if (Math.random() < 0.12) {
+            html += `<li style="color:#ff4d4d;">⚠ Anomaly detected at packet ${i}</li>`;
+            anomalies++;
+        }
     }
 
-    const list = document.getElementById('anomalyList');
-    list.innerHTML = "";
-    if(anomalies.length === 0){
-        list.innerHTML = "<li>No anomalies detected</li>";
-    } else {
-        anomalies.forEach(a => {
-            const li = document.createElement('li');
-            li.innerText = "Packet " + a;
-            list.appendChild(li);
-        });
+    if (anomalies === 0) {
+        html += `<li style="color:#00ff9c;">✔ No anomalies detected</li>`;
     }
 
-    showPage('resultPage');
+    html += `</ul>`;
+    document.getElementById('result').innerHTML = html;
 }
-
 </script>
 
 </body>
